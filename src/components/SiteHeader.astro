@@ -1,0 +1,52 @@
+---
+interface Link {
+  key: string;
+  label: string;
+  href: string;
+}
+
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = "home" } = Astro.props;
+
+const links: Link[] = [
+  { key: "work", label: "Work", href: "/#work" },
+  { key: "open-source", label: "Open Source", href: "/#open-source" },
+  { key: "education", label: "Education", href: "/#education" },
+  { key: "experience", label: "Experience", href: "/#experience" },
+  { key: "about", label: "About", href: "/about" },
+  { key: "contact", label: "Contact", href: "/#contact" },
+];
+
+const sectionKeys = new Set(["work", "open-source", "education", "experience", "contact"]);
+const onHome = activePage === "home";
+---
+
+<div class="header-wrap">
+  <header class="site-header">
+    <a class="brand-mark" href="/">AF</a>
+
+    <nav class="site-nav" aria-label="Primary">
+      {
+        links.map((link) => {
+          const href = onHome && sectionKeys.has(link.key)
+            ? link.href.replace("/", "")
+            : link.href;
+          const isSectionLink = onHome && href.startsWith("#");
+
+          return (
+            <a
+              href={href}
+              data-nav-link={isSectionLink ? "true" : undefined}
+              class:list={[!isSectionLink && activePage === link.key && "is-active"]}
+            >
+              {link.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+  </header>
+</div>

@@ -1,0 +1,90 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-aura" aria-hidden="true"></div>
+    <slot />
+
+    <script is:inline>
+      const revealElements = document.querySelectorAll(".reveal");
+
+      if (revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+              }
+            });
+          },
+          { threshold: 0.12 }
+        );
+
+        revealElements.forEach((element) => revealObserver.observe(element));
+      }
+
+      const navLinks = Array.from(
+        document.querySelectorAll('[data-nav-link][href^="#"]')
+      );
+
+      if (navLinks.length > 0) {
+        const sections = navLinks
+          .map((link) => {
+            const href = link.getAttribute("href");
+            return href ? document.querySelector(href) : null;
+          })
+          .filter(Boolean);
+
+        const setActiveLink = (id) => {
+          navLinks.forEach((link) => {
+            link.classList.toggle("is-active", link.getAttribute("href") === `#${id}`);
+          });
+        };
+
+        const firstLink = navLinks[0]?.getAttribute("href");
+        if (firstLink?.startsWith("#")) {
+          setActiveLink(firstLink.slice(1));
+        }
+
+        const sectionObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActiveLink(entry.target.id);
+              }
+            });
+          },
+          {
+            threshold: 0.35,
+            rootMargin: "-18% 0px -52% 0px",
+          }
+        );
+
+        sections.forEach((section) => sectionObserver.observe(section));
+      }
+    </script>
+  </body>
+</html>

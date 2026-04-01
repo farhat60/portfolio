@@ -1,0 +1,51 @@
+---
+interface Detail {
+  label: string;
+  text: string;
+}
+
+interface Link {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  tag: string;
+  period: string;
+  title: string;
+  summary: string;
+  accentClass?: string;
+  details: Detail[];
+  links?: Link[];
+}
+
+const { tag, period, title, summary, details, links = [], accentClass = "" } = Astro.props;
+---
+
+<article class={`project-card ${accentClass}`}>
+  <div class="project-meta">
+    <span>{tag}</span>
+    <span>{period}</span>
+  </div>
+  <h3>{title}</h3>
+  <p class="project-summary">{summary}</p>
+
+  <div class="project-grid">
+    {
+      details.map((detail) => (
+        <div class="project-detail">
+          <h4>{detail.label}</h4>
+          <p>{detail.text}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  {
+    links.length > 0 && (
+      <div class="project-links">
+        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    )
+  }
+</article>

@@ -1,0 +1,56 @@
+---
+interface Stage {
+  id: string;
+  step: string;
+  name: string;
+  blurb: string;
+  title: string;
+  description: string;
+  points: string[];
+}
+
+interface Props {
+  stages: Stage[];
+}
+
+const { stages } = Astro.props;
+---
+
+<div class="systems-layout">
+  <div class="systems-nav" role="tablist" aria-label="Research workflow stages">
+    {
+      stages.map((stage, index) => (
+        <button
+          class={`systems-trigger ${index === 0 ? "is-active" : ""}`}
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? "true" : "false"}
+          data-stage-trigger={stage.id}
+        >
+          <span class="systems-step">{stage.step}</span>
+          <span class="systems-name">{stage.name}</span>
+          <span class="systems-blurb">{stage.blurb}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="systems-panels">
+    {
+      stages.map((stage, index) => (
+        <article
+          class={`systems-panel ${index === 0 ? "is-active" : ""}`}
+          data-stage-panel={stage.id}
+          hidden={index !== 0}
+        >
+          <p class="systems-kicker">System view</p>
+          <h3>{stage.title}</h3>
+          <p class="systems-description">{stage.description}</p>
+          <ul class="systems-points">
+            {stage.points.map((point) => <li>{point}</li>)}
+          </ul>
+        </article>
+      ))
+    }
+  </div>
+</div>
