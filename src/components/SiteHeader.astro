@@ -10,14 +10,15 @@ interface Props {
 }
 
 const { activePage = "home" } = Astro.props;
+const base = "/portfolio/";
 
 const links: Link[] = [
-  { key: "work", label: "Work", href: "/#work" },
-  { key: "open-source", label: "Open Source", href: "/#open-source" },
-  { key: "education", label: "Education", href: "/#education" },
-  { key: "experience", label: "Experience", href: "/#experience" },
-  { key: "about", label: "About", href: "/about" },
-  { key: "contact", label: "Contact", href: "/#contact" },
+  { key: "work", label: "Work", href: `${base}#work` },
+  { key: "open-source", label: "Open Source", href: `${base}#open-source` },
+  { key: "education", label: "Education", href: `${base}#education` },
+  { key: "experience", label: "Experience", href: `${base}#experience` },
+  { key: "about", label: "About", href: `${base}about/` },
+  { key: "contact", label: "Contact", href: `${base}#contact` },
 ];
 
 const sectionKeys = new Set(["work", "open-source", "education", "experience", "contact"]);
@@ -26,13 +27,13 @@ const onHome = activePage === "home";
 
 <div class="header-wrap">
   <header class="site-header">
-    <a class="brand-mark" href="/">AF</a>
+    <a class="brand-mark" href={base}>AF</a>
 
     <nav class="site-nav" aria-label="Primary">
       {
         links.map((link) => {
           const href = onHome && sectionKeys.has(link.key)
-            ? link.href.replace("/", "")
+            ? `#${link.key}`
             : link.href;
           const isSectionLink = onHome && href.startsWith("#");
 

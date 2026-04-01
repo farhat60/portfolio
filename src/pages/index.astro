@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+const base = "/portfolio/";
 
 const proofPoints = [
   { value: "4", label: "merged public jsPsych PRs that are worth opening" },
@@ -303,13 +304,13 @@ const experience = [
           who do not start with insider access.
         </p>
 
-        <a class="button button-secondary" href="/about">Read background</a>
+        <a class="button button-secondary" href={`${base}about/`}>Read background</a>
       </article>
 
       <aside class="about-preview-visual">
         <div class="portrait-frame">
           <img
-            src="/portrait.jpg"
+            src={`${base}portrait.jpg`}
             alt="Portrait of Abdullah Farhat"
             loading="lazy"
           />

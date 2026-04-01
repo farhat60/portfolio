@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+const base = "/portfolio/";
 
 const themes = [
   {
@@ -63,7 +64,7 @@ const conciseFacts = [
     <section class="about-hero reveal">
       <figure class="about-portrait">
         <img
-          src="/portrait.jpg"
+          src={`${base}portrait.jpg`}
           alt="Portrait of Abdullah Farhat"
           loading="lazy"
         />
@@ -150,7 +151,7 @@ const conciseFacts = [
         </p>
       </div>
       <div class="contact-links">
-        <a href="/">Return to portfolio</a>
+        <a href={base}>Return to portfolio</a>
         <a href="mailto:afarhat@vassar.edu">afarhat@vassar.edu</a>
         <a href="https://github.com/farhat60">github.com/farhat60</a>
         <a href="https://www.linkedin.com/in/abhfarhat">linkedin.com/in/abhfarhat</a>
