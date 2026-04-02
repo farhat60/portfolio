@@ -15,39 +15,61 @@ const base = "/portfolio/";
 const links: Link[] = [
   { key: "work", label: "Work", href: `${base}#work` },
   { key: "open-source", label: "Open Source", href: `${base}#open-source` },
-  { key: "education", label: "Education", href: `${base}#education` },
   { key: "experience", label: "Experience", href: `${base}#experience` },
-  { key: "about", label: "About", href: `${base}about/` },
+  { key: "education", label: "Education", href: `${base}#education` },
   { key: "contact", label: "Contact", href: `${base}#contact` },
 ];
 
-const sectionKeys = new Set(["work", "open-source", "education", "experience", "contact"]);
+const sectionKeys = new Set([
+  "work",
+  "open-source",
+  "experience",
+  "education",
+  "contact",
+]);
 const onHome = activePage === "home";
+const brandHref = onHome ? "#top" : base;
 ---
 
 <div class="header-wrap">
   <header class="site-header">
-    <a class="brand-mark" href={base}>AF</a>
+    <a
+      class="brand-mark"
+      href={brandHref}
+      data-scroll-top={onHome ? "true" : undefined}
+    >
+      Abdullah Farhat
+    </a>
 
-    <nav class="site-nav" aria-label="Primary">
-      {
-        links.map((link) => {
-          const href = onHome && sectionKeys.has(link.key)
-            ? `#${link.key}`
-            : link.href;
-          const isSectionLink = onHome && href.startsWith("#");
+    <div class="header-actions">
+      <nav class="site-nav" aria-label="Primary">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        {
+          links.map((link) => {
+            const href = onHome && sectionKeys.has(link.key)
+              ? `#${link.key}`
+              : link.href;
+            const isSectionLink = onHome && href.startsWith("#");
 
-          return (
-            <a
-              href={href}
-              data-nav-link={isSectionLink ? "true" : undefined}
-              class:list={[!isSectionLink && activePage === link.key && "is-active"]}
-            >
-              {link.label}
-            </a>
-          );
-        })
-      }
-    </nav>
+            return (
+              <a
+                href={href}
+                data-nav-link={isSectionLink ? "true" : undefined}
+                class:list={[!isSectionLink && activePage === link.key && "is-active"]}
+              >
+                {link.label}
+              </a>
+            );
+          })
+        }
+      </nav>
+
+      <a
+        class:list={["header-page-link", activePage === "about" && "is-active"]}
+        href={`${base}about/`}
+      >
+        About
+      </a>
+    </div>
   </header>
 </div>

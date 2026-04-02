@@ -1,45 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SectionHeading from "../components/SectionHeading.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+
 const base = "/portfolio/";
 
-const themes = [
-  {
-    title: "Built through constraint",
-    body: "A lot of my path came from limited access, which pushed me toward self-teaching, practical learning, and making my own structure.",
-  },
-  {
-    title: "Open tools, wider access",
-    body: "I care about software that other people can reuse, understand, and build on without insider access or expensive platforms.",
-  },
-  {
-    title: "Human-centered systems",
-    body: "The work I gravitate toward sits near cognition, interaction, research infrastructure, and the parts of engineering that directly affect people using the system.",
-  },
-  {
-    title: "Clear pathways",
-    body: "A recurring pattern in my work is turning scattered information, repeated manual effort, and informal know-how into something more structured.",
-  },
-];
-
-const conciseFacts = [
-  {
-    label: "Background",
-    text: "Syrian student raised in Saudi Arabia, where my family lived as temporary residents before I came to the United States.",
-  },
-  {
-    label: "Education",
-    text: "Computer Science at Vassar with the Dartmouth dual-degree engineering path.",
-  },
-  {
-    label: "Current work",
-    text: "Open-source behavioral research tooling, campus technical support, and student technical leadership.",
-  },
-  {
-    label: "What I optimize for",
-    text: "Clear systems, lower friction, and software that is genuinely usable by people outside the immediate team.",
-  },
+const points = [
+  "Started with self-teaching and free online resources.",
+  "Care about open tools, accessibility, and maintainable systems.",
+  "Prefer practical engineering work that other people can reuse and extend.",
 ];
 ---
 
@@ -51,111 +20,50 @@ const conciseFacts = [
 
   <main class="site-shell about-page">
     <section class="page-intro reveal">
-      <p class="eyebrow">About</p>
-      <h1>Background shapes what I build.</h1>
+      <SectionHeading eyebrow="About" />
       <p class="page-intro-copy">
-        I&apos;m a Syrian student who grew up in Saudi Arabia, where my family
-        lived as temporary residents. That made access feel fragile and pushed
-        me toward self-teaching, open tools, and systems that lower barriers
-        for other people too.
+        I&apos;m Syrian and grew up in Saudi Arabia before coming to the United
+        States for college. Because my family lived there as temporary
+        residents, many academic opportunities were limited, which pushed me
+        toward self-teaching, free online resources, and practical systems work.
       </p>
     </section>
 
     <section class="about-hero reveal">
       <figure class="about-portrait">
         <img
-          src={`${base}portrait.jpg`}
+          src={`${base}abdullah-portrait.jpg`}
           alt="Portrait of Abdullah Farhat"
           loading="lazy"
         />
       </figure>
 
-      <article class="about-story">
-        <SectionHeading
-          eyebrow="Background"
-          title="Why access, clarity, and reusable tools matter to me."
-        />
+      <div class="about-side">
+        <article class="about-story">
+          <p class="about-card-label">Background</p>
+          <p>
+            That background is part of why I care about open-source work,
+            maintainable tooling, and engineering that lowers the barrier for
+            the next person using it.
+          </p>
 
-        <p>
-          I grew up as a Syrian living in Saudi Arabia, where my family&apos;s
-          status was temporary rather than secure. A lot of structured academic
-          and extracurricular opportunities were inconsistent, inaccessible, or
-          simply not built for people in my position. When I came to the U.S.,
-          that temporary residency ended entirely. Long before college, I had
-          already learned to rely on free online resources, self-directed
-          learning, and building my own path.
-        </p>
+          <ul class="about-points">
+            {points.map((point) => <li>{point}</li>)}
+          </ul>
+        </article>
 
-        <p>
-          That experience still shapes how I think about engineering. I am
-          drawn to open-source work, research software, and systems that reduce
-          friction for people who do not start with insider knowledge. I care
-          about software that is maintainable, shareable, and usable across
-          different devices, languages, and backgrounds.
-        </p>
-
-        <p>
-          At Vassar, and through the Dartmouth dual-degree path, that has
-          translated into work on behavioral research infrastructure, reusable
-          experiment tooling, campus technical support, and student technical
-          leadership. The common thread is straightforward: I like building
-          systems that other people can actually use and extend.
-        </p>
-      </article>
-    </section>
-
-    <section class="section reveal">
-      <SectionHeading
-        eyebrow="Themes"
-        title="What carries directly into the engineering."
-        body="These are the ideas that show up repeatedly in the work, not just in the story around it."
-      />
-
-      <div class="theme-grid">
-        {
-          themes.map((theme) => (
-            <article class="theme-card">
-              <h3>{theme.title}</h3>
-              <p>{theme.body}</p>
-            </article>
-          ))
-        }
+        <div class="about-contact">
+          <p class="about-contact-label">Contact</p>
+          <a href="mailto:afarhat@vassar.edu">afarhat@vassar.edu</a>
+          <a href="https://github.com/farhat60">github.com/farhat60</a>
+          <a href="https://www.linkedin.com/in/abhfarhat">linkedin.com/in/abhfarhat</a>
+          <p class="about-contact-location">Poughkeepsie, New York</p>
+        </div>
       </div>
     </section>
 
-    <section class="section reveal">
-      <SectionHeading
-        eyebrow="Concise version"
-        title="What a recruiter actually needs to know."
-      />
-
-      <div class="background-grid">
-        {
-          conciseFacts.map((fact) => (
-            <article class="background-card">
-              <p class="detail-label">{fact.label}</p>
-              <p>{fact.text}</p>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <footer class="contact-panel reveal">
-      <div class="contact-copy">
-        <p class="eyebrow">Next step</p>
-        <h2>Back to the work.</h2>
-        <p>
-          The main portfolio stays technical and recruiter-first. This page is
-          here for fuller context, not to replace the proof.
-        </p>
-      </div>
-      <div class="contact-links">
-        <a href={base}>Return to portfolio</a>
-        <a href="mailto:afarhat@vassar.edu">afarhat@vassar.edu</a>
-        <a href="https://github.com/farhat60">github.com/farhat60</a>
-        <a href="https://www.linkedin.com/in/abhfarhat">linkedin.com/in/abhfarhat</a>
-      </div>
-    </footer>
+    <div class="about-return reveal">
+      <a class="button button-secondary" href={base}>Return to portfolio</a>
+    </div>
   </main>
 </BaseLayout>

@@ -24,11 +24,11 @@ const { title, description } = Astro.props;
     />
   </head>
   <body>
-    <div class="page-noise" aria-hidden="true"></div>
-    <div class="page-aura" aria-hidden="true"></div>
     <slot />
 
     <script is:inline>
+      // This runs in the browser after Astro renders the page.
+      // Fade sections in as they enter the viewport.
       const revealElements = document.querySelectorAll(".reveal");
 
       if (revealElements.length > 0) {
@@ -46,45 +46,109 @@ const { title, description } = Astro.props;
         revealElements.forEach((element) => revealObserver.observe(element));
       }
 
+      // Keep the header highlight lined up with the section you're reading.
       const navLinks = Array.from(
         document.querySelectorAll('[data-nav-link][href^="#"]')
       );
+      const nav = document.querySelector(".site-nav");
+      const navIndicator = nav?.querySelector(".nav-indicator");
+      const brandMark = document.querySelector(".brand-mark");
+
+      if (brandMark?.dataset.scrollTop === "true") {
+        brandMark.addEventListener("click", (event) => {
+          // Scroll all the way to the page top instead of the main-content anchor.
+          event.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      const updateNavIndicator = () => {
+        // Keep the moving highlight aligned with the active nav link.
+        if (!nav || !navIndicator) {
+          return;
+        }
+
+        const activeLink = nav.querySelector("a.is-active");
+
+        if (!activeLink) {
+          navIndicator.setAttribute("hidden", "");
+          return;
+        }
+
+        navIndicator.removeAttribute("hidden");
+        navIndicator.style.width = `${activeLink.offsetWidth}px`;
+        navIndicator.style.height = `${activeLink.offsetHeight}px`;
+        navIndicator.style.transform = `translate(${activeLink.offsetLeft}px, ${activeLink.offsetTop}px)`;
+      };
 
       if (navLinks.length > 0) {
-        const sections = navLinks
+        const sectionEntries = navLinks
           .map((link) => {
             const href = link.getAttribute("href");
-            return href ? document.querySelector(href) : null;
+            const section = href ? document.querySelector(href) : null;
+
+            if (!href || !section) {
+              return null;
+            }
+
+            return { id: href.slice(1), section };
           })
           .filter(Boolean);
 
         const setActiveLink = (id) => {
           navLinks.forEach((link) => {
-            link.classList.toggle("is-active", link.getAttribute("href") === `#${id}`);
+            link.classList.toggle(
+              "is-active",
+              Boolean(id) && link.getAttribute("href") === `#${id}`
+            );
           });
+          brandMark?.classList.toggle("is-active", !id);
+          updateNavIndicator();
         };
 
-        const firstLink = navLinks[0]?.getAttribute("href");
-        if (firstLink?.startsWith("#")) {
-          setActiveLink(firstLink.slice(1));
-        }
-
-        const sectionObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                setActiveLink(entry.target.id);
-              }
-            });
-          },
-          {
-            threshold: 0.35,
-            rootMargin: "-18% 0px -52% 0px",
+        const updateActiveNavigation = () => {
+          // Treat the bottom of the page as Contact so the footer tab does not stall.
+          if (sectionEntries.length === 0) {
+            setActiveLink(null);
+            return;
           }
-        );
 
-        sections.forEach((section) => sectionObserver.observe(section));
+          const anchorOffset = 170;
+          const scrollTop = window.scrollY;
+          const firstSectionTop = sectionEntries[0].section.offsetTop - anchorOffset;
+          const bottomThreshold = 24;
+          const viewportBottom = scrollTop + window.innerHeight;
+          const documentBottom = document.documentElement.scrollHeight;
+
+          if (scrollTop < firstSectionTop) {
+            setActiveLink(null);
+            return;
+          }
+
+          if (viewportBottom >= documentBottom - bottomThreshold) {
+            setActiveLink(sectionEntries[sectionEntries.length - 1].id);
+            return;
+          }
+
+          let activeId = sectionEntries[0].id;
+
+          sectionEntries.forEach((entry) => {
+            if (scrollTop >= entry.section.offsetTop - anchorOffset) {
+              activeId = entry.id;
+            }
+          });
+
+          setActiveLink(activeId);
+        };
+
+        updateActiveNavigation();
+        window.addEventListener("scroll", updateActiveNavigation, { passive: true });
+        window.addEventListener("resize", updateActiveNavigation);
+        window.addEventListener("load", updateActiveNavigation);
       }
+
+      updateNavIndicator();
+      window.addEventListener("resize", updateNavIndicator);
     </script>
   </body>
 </html>

@@ -2,39 +2,36 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-const base = "/portfolio/";
 
-const proofPoints = [
-  { value: "4", label: "merged public jsPsych PRs that are worth opening" },
-  { value: "2", label: "degrees across the Vassar and Dartmouth dual-degree path" },
-  { value: "20+", label: "technical support tickets resolved weekly at Vassar" },
-  { value: "223", label: "residents supported through house leadership" },
-];
+const base = "/portfolio/";
 
 const featuredProjects = [
   {
-    tag: "Research software",
-    period: "2025 - Present",
-    title: "Heat and Cognition Research Infrastructure",
+    tag: "Web engineering",
+    period: "TypeScript / HTML / CSS",
+    title: "Heat and Cognition Experiment Toolkit",
     summary:
-      "Reusable web experiment tooling for an international behavioral research effort studying cognition under extreme heat.",
-    highlights: [
-      "Reusable task packages instead of one-off experiment builds.",
-      "Cross-device UI, localization-ready content, deployment workflow support, and structured CSV output.",
-      "Contributed to open tooling reported to reduce study setup from weeks to hours.",
-    ],
+      "Built reusable, localized web experiments for an international behavioral research project.",
+    detail:
+      "Worked on configuration, deployment support, cross-device UI, and structured CSV output instead of one-off study code.",
   },
   {
-    tag: "Systems project",
-    period: "Course collaboration",
+    tag: "Game systems",
+    period: "Java / libGDX",
     title: "Placebo World",
     summary:
-      "A libGDX game project that shows architecture, rendering setup, and collaborative systems work outside the research-software track.",
-    highlights: [
-      "Worked on MVC structuring, screen lifecycle setup, and camera or viewport fundamentals.",
-      "Supported debugging, asset servicing, and sequence-diagram planning in a team setting.",
-      "Built with Java, libGDX, Gradle, and a tiled-map workflow.",
-    ],
+      "Built a shared-codebase 2D adventure game prototype for desktop and Android.",
+    detail:
+      "Worked on overworld systems, screen lifecycle, inventory modeling, and multi-module libGDX architecture.",
+  },
+  {
+    tag: "Network systems",
+    period: "C / sockets",
+    title: "IRC Server",
+    summary:
+      "Built a non-blocking IRC server in C with concurrent client handling and channel state.",
+    detail:
+      "Implemented registration, core IRC commands, numeric replies, and automated protocol-level robustness checks.",
   },
 ];
 
@@ -42,151 +39,148 @@ const openSourceContributions = [
   {
     title: "Spatial n-back plugin",
     repo: "jspsych-contrib",
-    note: "Merged a configurable spatial n-back plugin for reusable cognitive testing in the broader jsPsych ecosystem.",
+    note: "Configurable TypeScript plugin for reusable cognitive testing.",
     href: "https://github.com/jspsych/jspsych-contrib/pull/174",
   },
   {
     title: "Columbia Card timeline",
     repo: "jspsych-timelines",
-    note: "Added a standardized timeline package for the Columbia Card Task with the structure expected for reuse.",
+    note: "Reusable timeline package with documentation and configuration support.",
     href: "https://github.com/jspsych/jspsych-timelines/pull/72",
   },
   {
     title: "Go / No-Go timeline",
     repo: "jspsych-timelines",
-    note: "Co-developed a configurable Go / No-Go task package with public PR history that shows iteration and collaboration.",
+    note: "Configurable task package for real web-based experiment flows.",
     href: "https://github.com/jspsych/jspsych-timelines/pull/62",
   },
   {
     title: "Core jsPsych fix",
     repo: "jsPsych",
-    note: "Fixed `enable_button_after` behavior in core, which is the kind of small but important change downstream experiment UIs depend on.",
+    note: "Fixed `enable_button_after` behavior in core jsPsych.",
     href: "https://github.com/jspsych/jsPsych/pull/3563",
+  },
+];
+
+const heroProof = [
+  {
+    value: "URSI Fellow",
+    label: "Vassar Undergraduate Research Summer Institute.",
+  },
+  {
+    value: "Weeks to hours",
+    label: "Toolkit work reported to reduce study setup time in lab workflows.",
   },
 ];
 
 const education = [
   {
+    key: "vassar",
     label: "Vassar College",
     degree: "B.A. in Computer Science",
     meta: "Expected 2028",
     note: "Primary undergraduate degree.",
+    coursework: [
+      "Data Structures and Algorithms",
+      "Software Design",
+      "Computer Networks",
+      "Theory of Computation",
+      "Computer Organization",
+    ],
   },
   {
+    key: "dartmouth",
     label: "Dartmouth College",
-    degree: "B.E. dual degree",
+    degree: "B.E. in Computer Engineering",
     meta: "Expected 2029",
-    note: "Engineering degree through the dual-degree path.",
+    note: "Second degree through the dual-degree path.",
+    coursework: [
+      "Distributed Systems and Fields",
+      "Embedded Systems",
+      "Digital Electronics",
+      "Electronics: Introduction to Linear and Digital Circuits",
+      "Discrete and Probabilistic Systems",
+    ],
   },
-];
-
-const coursework = [
-  "Data Structures and Algorithms",
-  "Software Design",
-  "Computer Networks",
-  "Theory of Computation",
-  "Computer Organization",
-  "Linear Algebra",
 ];
 
 const experience = [
   {
-    date: "May 2025 - Present",
+    date: "May 2025 - Aug 2026",
     role: "Assistant Research Software Engineer",
     org: "de Leeuw Lab, Vassar College",
-    body: "Builds reusable experiment packages, localization patterns, and deployment tooling for open-source behavioral studies.",
+    body: "Builds reusable web experiment packages, localization patterns, and deployment tooling for open-source behavioral studies.",
   },
   {
-    date: "Sep 2024 - May 2025",
+    date: "Sep 2024 - Aug 2026",
     role: "Service Desk Assistant",
     org: "Computing and Information Services, Vassar College",
     body: "Resolved 20+ support tickets weekly across device troubleshooting, OS issues, hardware repair, and day-to-day campus support.",
   },
   {
-    date: "May 2025 - Present",
+    date: "May 2025 - May 2026",
     role: "House President",
     org: "Jewett House, Vassar College",
-    body: "Leads a 20-person house team supporting a 223-resident community through event planning, coordination, and resident advocacy.",
+    body: "Leads a 20-person house team supporting a 223-resident community through planning, coordination, and resident advocacy.",
   },
   {
-    date: "2024 - Present",
+    date: "2024 - May 2026",
     role: "Tech Chair and Webmaster",
     org: "Coders++ and The Miscellany News",
-    body: "Guides open-source contribution workflows and supports the digital publishing stack for Vassar's student newspaper.",
+    body: "Supports open-source contribution workflows and the digital publishing stack for Vassar's student newspaper.",
   },
 ];
 ---
 
 <BaseLayout
   title="Abdullah Farhat | Portfolio"
-  description="Portfolio for Abdullah Farhat, a Vassar and Dartmouth dual-degree computer science student building open-source research software and reusable web experiment tooling."
+  description="Portfolio for Abdullah Farhat, a Vassar computer science student and Dartmouth computer engineering dual-degree student interested in full-stack and general software engineering, with public work in web tooling and open-source packages."
 >
   <SiteHeader activePage="home" />
 
   <main class="site-shell" id="top">
     <section class="hero reveal">
       <div class="hero-main">
-        <p class="eyebrow">Abdullah Farhat</p>
-        <h1>Open-source research software for real studies.</h1>
-        <p class="hero-role">
-          Dual-degree Vassar and Dartmouth student building reusable web
-          experiments, public task packages, and deployment-ready research
-          tooling.
-        </p>
-        <p class="hero-copy">
-          The strongest signal here is practical engineering: configurable
-          experiment infrastructure, localization-ready interfaces,
-          cross-device behavior, and public contribution history that can be
-          opened and inspected.
-        </p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="mailto:afarhat@vassar.edu">Email</a>
-          <a class="button button-secondary" href="https://github.com/farhat60">GitHub</a>
-          <a class="button button-secondary" href="https://www.linkedin.com/in/abhfarhat">LinkedIn</a>
+        <div class="hero-intro">
+          <div class="hero-copy-block">
+            <h1>Abdullah Farhat</h1>
+            <p class="hero-role">
+              Assistant Research Software Engineer at jsPsych
+            </p>
+            <p class="hero-copy">
+              Building reusable web tooling, experiment infrastructure, and open-source packages. Interested in full-stack and general software engineering.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary button-email" href="mailto:afarhat@vassar.edu">Email</a>
+              <a class="button button-secondary button-github" href="https://github.com/farhat60">GitHub</a>
+              <a class="button button-secondary button-linkedin" href="https://www.linkedin.com/in/abhfarhat">LinkedIn</a>
+              <a class="button button-secondary button-about" href={`${base}about/`}>About</a>
+            </div>
+          </div>
+
+          <figure class="hero-photo">
+            <img
+              src={`${base}abdullah-headshot.jpg`}
+              alt="Headshot of Abdullah Farhat"
+              loading="eager"
+            />
+          </figure>
+        </div>
+        <div class="proof-strip">
+          {
+            heroProof.map((item) => (
+              <div class="proof-item">
+                <p class="proof-value">{item.value}</p>
+                <p class="proof-label">{item.label}</p>
+              </div>
+            ))
+          }
         </div>
       </div>
-
-      <aside class="hero-side">
-        <article class="hero-stat">
-          <p class="side-label">Current</p>
-          <p class="side-title">Assistant Research Software Engineer</p>
-          <p class="side-body">de Leeuw Lab, Vassar College</p>
-        </article>
-        <article class="hero-stat">
-          <p class="side-label">Education</p>
-          <p class="side-title">Vassar B.A. 2028 / Dartmouth B.E. 2029</p>
-          <p class="side-body">
-            Computer Science at Vassar, engineering dual-degree path through
-            Dartmouth.
-          </p>
-        </article>
-        <article class="hero-stat">
-          <p class="side-label">Looking for</p>
-          <p class="side-title">Internships and early-career software roles</p>
-          <p class="side-body">
-            Research software, developer tooling, and strong engineering teams.
-          </p>
-        </article>
-      </aside>
-    </section>
-
-    <section class="proof-strip reveal" aria-label="Quick proof">
-      {
-        proofPoints.map((item) => (
-          <article class="proof-item">
-            <p class="proof-value">{item.value}</p>
-            <p class="proof-label">{item.label}</p>
-          </article>
-        ))
-      }
     </section>
 
     <section class="section reveal" id="work">
-      <SectionHeading
-        eyebrow="Selected work"
-        title="Start with the strongest technical signal."
-        body="The work below is the clearest view of how I build: reusable infrastructure first, then public contribution history that can be inspected directly."
-      />
+      <SectionHeading eyebrow="Work" />
 
       <div class="project-grid">
         {
@@ -198,9 +192,7 @@ const experience = [
               </div>
               <h3>{project.title}</h3>
               <p class="project-summary">{project.summary}</p>
-              <ul class="project-highlights">
-                {project.highlights.map((highlight) => <li>{highlight}</li>)}
-              </ul>
+              <p class="project-detail">{project.detail}</p>
             </article>
           ))
         }
@@ -208,72 +200,28 @@ const experience = [
     </section>
 
     <section class="section reveal" id="open-source">
-      <SectionHeading
-        eyebrow="Open source"
-        title="Merged PRs are the proof, not just the repo names."
-        body="These links make contribution history easy to verify. They show authorship, iteration, and the kind of work that survives public review."
-      />
+      <SectionHeading eyebrow="Open source" />
 
-      <div class="open-source-grid">
+      <div class="open-source-list">
         {
           openSourceContributions.map((item) => (
-            <article class="open-source-card">
-              <div class="card-top">
-                <p class="case-tag">{item.repo}</p>
-                <p class="case-period">Merged PR</p>
+            <article class="open-source-row">
+              <div class="open-source-copy">
+                <div class="card-top">
+                  <p class="case-tag">{item.repo}</p>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.note}</p>
               </div>
-              <h3>{item.title}</h3>
-              <p>{item.note}</p>
-              <a class="inline-link" href={item.href}>Open PR</a>
+              <a class="inline-link" href={item.href}>View PR</a>
             </article>
           ))
         }
       </div>
-
-      <p class="section-note">
-        Current in-progress work includes heat-common-resources,
-        pattern-comparison, speeded-matching, and flanker timelines. They are
-        useful evidence of momentum, but the merged PRs are the strongest
-        recruiter-facing proof right now.
-      </p>
-    </section>
-
-    <section class="section reveal" id="education">
-      <SectionHeading
-        eyebrow="Education"
-        title="Dual-degree path, kept compact."
-      />
-
-      <div class="education-grid">
-        <article class="education-card">
-          <div class="education-list">
-            {
-              education.map((item) => (
-                <div class="education-item">
-                  <p class="education-label">{item.label}</p>
-                  <h3>{item.degree}</h3>
-                  <p class="education-meta">{item.meta}</p>
-                  <p class="education-note">{item.note}</p>
-                </div>
-              ))
-            }
-          </div>
-        </article>
-
-        <article class="education-card">
-          <p class="education-label">Selected coursework</p>
-          <ul class="chip-list">
-            {coursework.map((course) => <li>{course}</li>)}
-          </ul>
-        </article>
-      </div>
     </section>
 
     <section class="section reveal" id="experience">
-      <SectionHeading
-        eyebrow="Experience"
-        title="Technical work, support work, and leadership."
-      />
+      <SectionHeading eyebrow="Experience" />
 
       <div class="experience-grid">
         {
@@ -289,42 +237,51 @@ const experience = [
       </div>
     </section>
 
-    <section class="section reveal about-preview">
-      <article class="about-preview-copy">
-        <SectionHeading
-          eyebrow="Background"
-          title="Built through constraint, aimed at useful systems."
-          body="The full background lives on a separate page so the homepage stays recruiter-first. The short version is that limited access pushed me toward self-teaching, open tools, and software that lowers barriers."
-        />
+    <section class="section reveal" id="education">
+      <SectionHeading eyebrow="Education" />
 
-        <p>
-          I&apos;m Syrian and grew up in Saudi Arabia, where my family lived as
-          temporary residents. That experience shaped what I value now:
-          systems that are clear, reusable, and genuinely accessible to people
-          who do not start with insider access.
-        </p>
+      <div class="education-grid">
+        <article class="education-card">
+          <div class="education-list">
+            {
+              education.map((item, index) => (
+                <button
+                  type="button"
+                  class:list={["education-tab", index === 0 && "is-active"]}
+                  data-education-tab
+                  data-education-key={item.key}
+                  data-education-label={item.label}
+                  data-coursework={item.coursework.join("|")}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                >
+                  {/* Clicking a school updates the coursework card on the right. */}
+                  <p class="education-label">{item.meta}</p>
+                  <h3 class="education-school">{item.label}</h3>
+                  <p class="education-degree">{item.degree}</p>
+                  <p class="education-note">{item.note}</p>
+                </button>
+              ))
+            }
+          </div>
+        </article>
 
-        <a class="button button-secondary" href={`${base}about/`}>Read background</a>
-      </article>
-
-      <aside class="about-preview-visual">
-        <div class="portrait-frame">
-          <img
-            src={`${base}portrait.jpg`}
-            alt="Portrait of Abdullah Farhat"
-            loading="lazy"
-          />
-        </div>
-      </aside>
+        <article class="education-card coursework-card" data-coursework-panel>
+          <p class="education-label">Selected coursework</p>
+          <p class="coursework-school" data-coursework-label>{education[0].label}</p>
+          <ul class="chip-list" data-coursework-list>
+            {education[0].coursework.map((course) => <li>{course}</li>)}
+          </ul>
+        </article>
+      </div>
     </section>
 
     <footer class="contact-panel reveal" id="contact">
       <div class="contact-copy">
         <p class="eyebrow">Contact</p>
-        <h2>Available for internships and early-career engineering roles.</h2>
+        <h2>Open to internships and early-career software roles.</h2>
         <p>
-          I&apos;m looking for teams where strong technical judgment, useful
-          systems, and clear execution matter more than hype.
+          Full-stack, product, developer tooling, and general software
+          engineering roles are the best fit.
         </p>
       </div>
       <div class="contact-links">
@@ -336,4 +293,47 @@ const experience = [
       </div>
     </footer>
   </main>
+
+  <script is:inline>
+    // Read the selected school's coursework from data attributes and swap the chips.
+    const educationTabs = Array.from(
+      document.querySelectorAll("[data-education-tab]")
+    );
+    const courseworkList = document.querySelector("[data-coursework-list]");
+    const courseworkLabel = document.querySelector("[data-coursework-label]");
+
+    if (educationTabs.length > 0 && courseworkList && courseworkLabel) {
+      const renderCoursework = (tab) => {
+        // Rebuild the chip list from the selected school's coursework data.
+        const courses = (tab.dataset.coursework || "")
+          .split("|")
+          .map((course) => course.trim())
+          .filter(Boolean);
+
+        courseworkLabel.textContent = tab.dataset.educationLabel || "";
+        courseworkList.innerHTML = "";
+
+        courses.forEach((course) => {
+          const item = document.createElement("li");
+          item.textContent = course;
+          courseworkList.appendChild(item);
+        });
+      };
+
+      educationTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          // Toggle the active school and keep the button state in sync for screen readers.
+          educationTabs.forEach((item) => {
+            const isActive = item === tab;
+            item.classList.toggle("is-active", isActive);
+            item.setAttribute("aria-pressed", String(isActive));
+          });
+
+          renderCoursework(tab);
+        });
+      });
+
+      renderCoursework(educationTabs[0]);
+    }
+  </script>
 </BaseLayout>

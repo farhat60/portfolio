@@ -1,15 +1,16 @@
 ---
 interface Props {
   eyebrow: string;
-  title: string;
   body?: string;
 }
 
-const { eyebrow, title, body } = Astro.props;
+const { eyebrow, body } = Astro.props;
 ---
 
 <div class="section-heading">
-  <p class="eyebrow">{eyebrow}</p>
-  <h2>{title}</h2>
+  <div class="section-heading-row">
+    <p class="section-title">{eyebrow}</p>
+    <span class="section-line" aria-hidden="true"></span>
+  </div>
   {body && <p class="section-body">{body}</p>}
 </div>
