@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://farhat60.github.io",
+  site: "https://afarhat.org",
   base: "/portfolio",
   output: "static",
   build: {
