@@ -1,0 +1,473 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  MIN_PASSWORD_LENGTH,
+  adminPassword,
+  endSession,
+  isSignedIn,
+  passwordMatches,
+  startSession,
+} from "../../lib/auth";
+import {
+  MAX_LABEL_LENGTH,
+  ResumeError,
+  addResume,
+  deleteResume,
+  isResumeId,
+  listResumes,
+  replaceResume,
+  setMainResume,
+  type Resume,
+} from "../../lib/resumes";
+
+export const prerender = false;
+
+const messages: Record<string, string> = {
+  uploaded: "Uploaded",
+  replaced: "Replaced",
+  deleted: "Deleted",
+  main: "Main set",
+  out: "Signed out",
+  wrong: "Wrong password",
+  signin: "Sign in first",
+  nopdf: "PDF only",
+  big: "Too big (4 MB max)",
+  nolabel: "Add a label",
+  missing: "Not found",
+  error: "Storage error",
+};
+
+const configured = adminPassword() !== null;
+const signedIn = configured && isSignedIn(Astro.cookies);
+
+async function fileBytes(form: FormData) {
+  const file = form.get("file");
+  return file instanceof File ? Buffer.from(await file.arrayBuffer()) : Buffer.alloc(0);
+}
+
+async function runAction(action: string, form: FormData): Promise<string> {
+  const id = String(form.get("id") ?? "");
+
+  if (action !== "upload" && action !== "logout" && !isResumeId(id)) {
+    return "missing";
+  }
+
+  try {
+    switch (action) {
+      case "upload":
+        await addResume(String(form.get("label") ?? ""), await fileBytes(form));
+        return "uploaded";
+      case "replace":
+        await replaceResume(id, await fileBytes(form));
+        return "replaced";
+      case "main":
+        await setMainResume(id);
+        return "main";
+      case "delete":
+        await deleteResume(id);
+        return "deleted";
+      case "logout":
+        endSession(Astro.cookies);
+        return "out";
+      default:
+        return "";
+    }
+  } catch (error) {
+    if (error instanceof ResumeError) {
+      return error.message;
+    }
+
+    console.error("Admin action failed", error);
+    return "error";
+  }
+}
+
+if (Astro.request.method === "POST" && configured) {
+  const form = await Astro.request.formData();
+  const action = String(form.get("action") ?? "");
+  let result = "";
+
+  if (action === "login") {
+    if (passwordMatches(String(form.get("password") ?? ""))) {
+      startSession(Astro.cookies, Astro.url.protocol === "https:");
+    } else {
+      // Slow down password guessing.
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      result = "wrong";
+    }
+  } else if (!signedIn) {
+    result = "signin";
+  } else {
+    result = await runAction(action, form);
+  }
+
+  return Astro.redirect(result ? `/admin?msg=${result}` : "/admin", 303);
+}
+
+const message = messages[Astro.url.searchParams.get("msg") ?? ""] ?? "";
+let resumes: Resume[] = [];
+let storageError = false;
+
+if (signedIn) {
+  try {
+    resumes = await listResumes();
+  } catch (error) {
+    console.error("Could not list resumes", error);
+    storageError = true;
+  }
+}
+
+// Links always point at the real domain, even from a preview deployment.
+const linkOrigin = import.meta.env.PROD ? (Astro.site?.origin ?? Astro.url.origin) : Astro.url.origin;
+const linkFor = (resume: Resume) => `${linkOrigin}/r/${resume.id}`;
+const shortLink = (resume: Resume) => linkFor(resume).replace(/^https?:\/\//, "");
+const dateFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "America/New_York",
+});
+---
+
+<BaseLayout title="Resumes" description="Resume links" noindex>
+  <main class="admin">
+    <header class="admin-head">
+      <h1>Resumes</h1>
+      {
+        signedIn && (
+          <form method="post">
+            <button class="quiet" name="action" value="logout">Sign out</button>
+          </form>
+        )
+      }
+    </header>
+
+    {message && <p class="admin-message" role="status">{message}</p>}
+
+    {
+      !configured ? (
+        <p class="admin-note">
+          Admin is off. Set ADMIN_PASSWORD ({MIN_PASSWORD_LENGTH}+ characters) in Vercel.
+        </p>
+      ) : !signedIn ? (
+        <form method="post" class="admin-panel admin-login">
+          <label>
+            Password
+            <input type="password" name="password" autocomplete="current-password" required autofocus />
+          </label>
+          <button class="primary" name="action" value="login">Sign in</button>
+        </form>
+      ) : (
+        <>
+          <form method="post" enctype="multipart/form-data" class="admin-panel admin-upload">
+            <label>
+              Label
+              <input name="label" maxlength={MAX_LABEL_LENGTH} placeholder="Jane Street" required />
+            </label>
+            <label>
+              PDF
+              <input type="file" name="file" accept=".pdf,application/pdf" required />
+            </label>
+            <button class="primary" name="action" value="upload">Upload</button>
+          </form>
+
+          {storageError ? (
+            <p class="admin-note">Storage is not reachable. Check the Blob store in Vercel.</p>
+          ) : resumes.length === 0 ? (
+            <p class="admin-note">No resumes yet.</p>
+          ) : (
+            <ul class="admin-list">
+              {resumes.map((resume) => (
+                <li class="admin-panel admin-row">
+                  <div class="row-title">
+                    <span class="row-label">{resume.label}</span>
+                    {resume.isMain && <span class="row-tag">Main</span>}
+                    <span class="row-date">{dateFormat.format(resume.updatedAt)}</span>
+                  </div>
+
+                  <div class="row-link">
+                    <a href={`/r/${resume.id}`} target="_blank" rel="noopener">
+                      {shortLink(resume)}
+                    </a>
+                    <button type="button" class="copy" data-copy={linkFor(resume)}>
+                      Copy
+                    </button>
+                  </div>
+
+                  <div class="row-actions">
+                    <form method="post" enctype="multipart/form-data" data-replace>
+                      <input type="hidden" name="id" value={resume.id} />
+                      <input type="hidden" name="action" value="replace" />
+                      <label class="quiet">
+                        Replace
+                        <input class="visually-hidden" type="file" name="file" accept=".pdf,application/pdf" />
+                      </label>
+                    </form>
+                    {!resume.isMain && (
+                      <form method="post">
+                        <input type="hidden" name="id" value={resume.id} />
+                        <button class="quiet" name="action" value="main">Make main</button>
+                      </form>
+                    )}
+                    <form method="post" data-confirm={`Delete "${resume.label}"? Its link stops working.`}>
+                      <input type="hidden" name="id" value={resume.id} />
+                      <button class="quiet danger" name="action" value="delete">Delete</button>
+                    </form>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )
+    }
+  </main>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const link = button.dataset.copy ?? "";
+
+        try {
+          await navigator.clipboard.writeText(link);
+          button.textContent = "Copied";
+        } catch {
+          window.prompt("Copy link", link);
+        }
+
+        setTimeout(() => (button.textContent = "Copy"), 1500);
+      });
+    });
+
+    document.querySelectorAll<HTMLFormElement>("[data-replace]").forEach((form) => {
+      form.querySelector("input[type=file]")?.addEventListener("change", () => form.requestSubmit());
+    });
+
+    document.querySelectorAll<HTMLFormElement>("[data-confirm]").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        if (!window.confirm(form.dataset.confirm ?? "Are you sure?")) {
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .admin {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .admin-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .admin-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 1.1rem 1.2rem;
+  }
+
+  .admin-login,
+  .admin-upload {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.9rem;
+    margin-bottom: 1.6rem;
+  }
+
+  label {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .admin-login label,
+  .admin-upload label {
+    flex: 1 1 14rem;
+  }
+
+  input:not([type="file"]) {
+    padding: 0.62rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-strong);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 500;
+  }
+
+  input[type="file"] {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  input:focus-visible,
+  button:focus-visible,
+  label.quiet:focus-within,
+  .row-link a:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .primary {
+    padding: 0.7rem 1.3rem;
+    border: 1px solid #141311;
+    background: #141311;
+    color: #faf6ef;
+    font-weight: 700;
+  }
+
+  .quiet,
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.1rem;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .quiet:hover,
+  .copy:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .danger:hover {
+    color: #9b2c22;
+  }
+
+  .admin-message {
+    margin: 0 0 1rem;
+    padding: 0.55rem 0.8rem;
+    border-left: 3px solid var(--accent);
+    background: var(--surface-soft);
+    font-weight: 700;
+  }
+
+  .admin-note {
+    color: var(--muted);
+  }
+
+  .admin-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .admin-row {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .row-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .row-label {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .row-tag {
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .row-date {
+    margin-left: auto;
+    color: var(--soft);
+    font-size: 0.85rem;
+  }
+
+  .row-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.9rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88rem;
+  }
+
+  .row-link a {
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 3px;
+  }
+
+  .row-link .copy {
+    font-family: "Manrope", sans-serif;
+  }
+
+  .row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.1rem;
+  }
+
+  .row-actions label.quiet {
+    display: inline-flex;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 560px) {
+    .admin {
+      padding-top: 1.8rem;
+    }
+
+    .primary {
+      width: 100%;
+    }
+
+    .row-date {
+      margin-left: 0;
+    }
+  }
+</style>
